@@ -72,6 +72,8 @@ def jcamp_read(filehandle):
             continue
         if line.startswith('$$'):
             continue
+        if '$$' in line:
+            line = line[:line.index('$$')]
 
         ## Lines beginning with '##' are header lines.
         if line.startswith('##'):
@@ -349,7 +351,7 @@ def jcamp_parse(line):
 
     ## If there are any coded digits, then replace the codes with the appropriate numbers.
     str_DUP_digits = ''.join(DUP_digits.keys())
-    if any(i in 'line' for i in str_DUP_digits):
+    if any(i in line for i in str_DUP_digits):
         ## Split the line into individual characters so that you can check for coded characters one-by-one.
         newline = list(line[:])
         offset = 0
@@ -360,7 +362,7 @@ def jcamp_parse(line):
                 newline.pop(i + offset)
                 for j in range(mul - 1):
                     newline.insert(i + offset, prev_c)
-                offset += mul
+                offset += mul-2
         line = "".join(newline)
 
     DIF = False
